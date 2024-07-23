@@ -1,0 +1,65 @@
+﻿@using ManagementAssistanceForBusinessWeb_OnlyRole.Models
+@model ManagementAssistanceForBusinessWeb_OnlyRole.Models.TaskViewModels.CreateNewTaskModel;
+
+@* @model ManagementAssistanceForBusinessWeb_OnlyRole.Models.TaskViewModels.CreateNewTaskModel; *@
+
+<!-- Modal -->
+<div class="modal fade" id="addTaskModal" tabindex="-1" role="dialog" aria-labelledby="addTaskModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addTaskModalLabel">Add New Task</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          
+        <form id="addTaskForm" asp-controller="Task" asp-action="CreateNewTask" method="post">
+             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+          <div class="form-group">
+            <label for="taskName">Task Name</label>
+            <input type="text" class="form-control" id="taskName" asp-for="Name" required>
+            <span asp-validation-for="Name" class="text-danger"></span>
+          </div>
+          <div class="form-group">
+            <label for="taskDescription">Task Content</label>
+            <textarea class="form-control" id="taskContent" rows="3" asp-for="Content" required></textarea>
+          </div>
+           <div class="form-group">
+            <label for="taskDueDate">Due Date</label>
+             <input type="date" class="form-control" id="taskDueDate" asp-for="DueDate" required>
+             <span asp-validation-for="DueDate" class="text-danger"></span>
+           </div>
+           <div class="form-group">
+            @* <label for="taskDueDate">Due Date</label> *@
+             <input type="hidden" id="projectIdInput" name="ProjectID" value="@Model.ProjectID" asp-for="ProjectID" />
+           </div>
+           <div class="form-group" id="userSelectContainer">
+                        <!-- User dropdown will be loaded here -->
+                    </div>
+                   <div class="form-group">
+                        <label>Status</label><br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="status" id="statusToDo" value="ToDo" asp-for="Status">
+                            <label class="form-check-label" for="statusToDo">To Do</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="status" id="statusDoing" value="Doing" asp-for="Status">
+                            <label class="form-check-label" for="statusDoing">Doing</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="status" id="statusDone" value="Done" asp-for="Status">
+                            <label class="form-check-label" for="statusDone">Done</label>
+                        </div>
+                    </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+@section Scripts {
+        <partial name="_ValidationScriptsPartial"/>
+}

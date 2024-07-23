@@ -1,0 +1,119 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model IEnumerable<ProjectModel>
+
+
+<div class="projectboard">
+    @foreach(var project in Model)
+    {
+                  <div class="column" data-id="@project.ID" onclick="redirectToTaskForProject(this)">
+                    <h2>Project</h2>
+                    <div class="task-card">
+                        <div class="task-header">@project.Name</div>
+                        <div class="task-title">@project.Description</div>
+                        <div class="task-footer">
+                            <span>@project.StartTime</span>
+
+                        </div>
+                    </div>
+                   </div>     
+             
+    }
+    
+            <!-- Thêm các task khác tương tự -->
+          @*           <div class="column">
+            <h2>Review</h2>
+            <div class="task-card">
+                <div class="task-header">#PM0013</div>
+                <div class="task-title">Admin Layout Design</div>
+                <div class="task-desc">Create a responsive admin dashboard layout.</div>
+                <div class="task-footer">
+                    <span>14/08/2021</span>
+                    <span>4/4</span>
+                    <span class="tag">UI/UX</span>
+                </div>
+            </div>
+        </div> *@
+</div>
+<script>
+    let projectID;
+    // chuyen huong xu li toi Task
+    function redirectToTaskForProject(element) {
+        var projectID = $(element).data('id');
+        console.log(projectID);
+        window.location.href = `/Task/GetAllTaskByProjectID?projectID=${projectID}`;
+        // window.location.href = `/Task/GetAllTaskByProjectID?projectID=${projectID}&name=My`;
+
+    }
+</script>
+<style>
+   /*  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+ */}
+
+.projectboard {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.column {
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    margin: 0 10px;
+    flex: 1;
+}
+
+.column h2 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+.task-card {
+    background-color: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+.task-header {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.task-title {
+    font-size: 1em;
+    margin-bottom: 5px;
+}
+
+.task-desc {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.task-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8em;
+}
+
+.tag {
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 3px;
+    padding: 2px 5px;
+}
+
+</style>

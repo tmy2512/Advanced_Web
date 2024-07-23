@@ -1,0 +1,34 @@
+﻿
+@{
+    ViewData["Title"] = "Welcome";
+    Layout = "~/Views/Shared/_LayoutAuthentication.cshtml";
+}
+<style>
+    .welcome-message {
+    font-size: 2em;
+    /* opacity: 0; */
+/*     transform: translateY(-50px);
+    animation: slideDown 2s forwards; */
+}
+
+
+.redirect-message {
+    margin-top: 20px;
+    font-size: 1.2em;
+}
+</style>
+    <div class="welcome-container">
+        <div class="welcome-message">
+            Welcome, @ViewBag.Username!
+        </div>
+        <div class="redirect-message">
+            You will be redirected to the homepage in 5 seconds...
+        </div>
+    </div>
+
+
+<script>
+    setTimeout(function() {
+        window.location.href = '@Url.Action("Index", "Home")'
+    }, 5000);
+</script>

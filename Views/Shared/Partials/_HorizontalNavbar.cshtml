@@ -1,0 +1,42 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor httpContextAccessor
+
+
+
+@* navbar *@
+    <div class="navbar">
+        <div class="navbar-left">
+            <form asp-controller="Project" asp-action="CreateNewProject" method="get">
+                <button type="submit" class="create-button">+ Create New</button>
+            </form>
+
+            @* <button asp-controller="Project" asp-action="CreateNewProject" class="create-button">+ Create New</button> *@
+        </div>
+        <div class="navbar-right">
+            <form class="search-form">
+                <input type="text" placeholder="Search...">
+                <button type="submit"><i class="icon icon-search"></i></button>
+            </form>
+            <div class="icon-container">
+                <i class="icon icon-notification"></i>
+            </div>
+            <div class="icon-container">
+                <i class="icon icon-user"></i>
+                 @if (httpContextAccessor.HttpContext.Session.GetString("Username") != null)
+                 {
+                <span class="user-name">@httpContextAccessor.HttpContext.Session.GetString("Username")</span>
+
+                 }
+                else
+                 {
+                     <span class="user-name">User</span>
+                 }
+        </div>
+        </div>
+    </div>
+   

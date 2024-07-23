@@ -1,0 +1,92 @@
+﻿
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #032d46;
+    padding: 0px 20px;
+    color: #b6b8c0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    box-shadow: 0 0 2px 0 rgb(237,238,240);
+    z-index: 1000; /* Đảm bảo navbar hiển thị trên các phần tử khác */
+}
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-right {
+    display: flex;
+    align-items: center;
+}
+
+.create-button {
+    margin-left: 50px; /* Khoảng cách 50px từ lề trái */
+    padding: 8px 15px;
+    background-color: #0079bf;
+    border: none;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.search-form {
+    display: flex;
+    align-items: center;
+    margin-left: auto; /* Đẩy form tìm kiếm sang bên phải cùng */
+}
+
+    .search-form input[type="text"] {
+        padding: 8px;
+        border: none;
+        border-radius: 4px 0 0 4px;
+        outline: none;
+        font-size: 14px;
+    }
+
+    .search-form button {
+        background-color: #0079bf;
+        border: none;
+        color: #fff;
+        padding: 8px 10px;
+        border-radius: 0 4px 4px 0;
+        cursor: pointer;
+    }
+
+.navbar .icon-container {
+    margin-left: 10px;
+    position: relative;
+}
+
+    .icon-container i {
+        font-size: 20px; /* Kích thước chung cho các icon */
+    }
+
+.user-name {
+    margin-left: 5px;
+    font-size: 14px;
+}
+
+/* Icon styles */
+
+.icon-search::before {
+    content: "\1F50D"; /* Unicode for search icon */
+}
+
+.icon-notification::before {
+    content: "\1F514"; /* Unicode for bell icon (notification) */
+}
+
+.icon-user::before {
+    content: "\1F464"; /* Unicode for bust in silhouette (user) */
+}
+/*
+.content {
+    margin-top: 70px; /* Để tránh chồng lấn với navbar cố định */
+padding: 20px;
+}
+*/

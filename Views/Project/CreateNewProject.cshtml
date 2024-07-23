@@ -1,0 +1,61 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model ManagementAssistanceForBusinessWeb_OnlyRole.Models.ViewModels.CreateNewProjectViewModel;
+<style>
+     .containerCreateNewProject {
+         transform: translateX(-50%);
+    position: absolute;
+    left: 50%;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 30%;
+        
+        }
+        .containerCreateNewProject h1 {
+            text-align: center;
+        }
+        .containerCreateNewProject label {
+            display: block;
+            margin-top: 10px;
+        }
+        .containerCreateNewProject input[type="text"], textarea, input[type="datetime-local"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .containerCreateNewProject button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        .containerCreateNewProject button:hover {
+            background-color: #218838;
+        }
+</style>
+ <div class="containerCreateNewProject">
+        <h1>Add New Project</h1>
+        <form asp-action="CreateNewProject" method="POST">
+            <label>Project Name:</label>
+            <input type="text" id="name" asp-for="Name" required>
+
+            <label>Description:</label>
+            <textarea id="description" asp-for="Description" rows="4" required></textarea>
+
+            <label>Start Time:</label>
+            <input type="datetime-local" asp-for="StartTime" required>
+
+            <button type="submit">Add Project</button>
+        </form>
+    </div>

@@ -1,0 +1,141 @@
+﻿body {
+    margin: 0;
+    font-family: "Source Sans Pro", sans-serif;
+    display: flex;
+    height: 100vh;
+}
+
+.vertical-navbar {
+    width: 60px; /* Initial width to show icons only */
+    background-color: #032d46;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 0;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: width 0.3s;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1000; /* Đảm bảo navbar hiển thị trên các phần tử khác */
+}
+
+.logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+    .logo img {
+        width: 40px;
+        height: 40px;
+        background-color: #0079bf;
+    }
+
+.menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    text-align: center;
+    /* color: #4d6a7c; */
+}
+
+    .menu > li {
+        position: relative;
+        width: 100%;
+    }
+
+.dropdown:hover .icon-container,
+.dropdown:hover .dropdown-content .menu-title {
+    background-color: #0079bf;
+    /* height: 10px; */
+}
+
+.icon-container {
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0;
+    transition: background-color 0.3s;
+    width: 100%;
+}
+
+    .icon-container > i:hover {
+        background-color: #0079bf;
+    }
+
+.vertical-navbar .icon {
+    font-size: 15px;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    left: 60px; /* Aligns the submenu to the right of the main menu */
+    top: 0;
+    background-color: #1b2a49;
+    /* box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); */
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 200px;
+}
+
+    .dropdown-content .menu-title {
+        padding: 19px 0;
+    }
+
+    .dropdown-content a {
+        color: #4d6a7c;
+        text-decoration: none;
+        display: block;
+        padding: 10px 20px;
+        transition: background-color 0.3s;
+    }
+
+        .dropdown-content a:hover {
+            color: white;
+        }
+
+.dropdown:hover .dropdown-content {
+    display: block;
+    position: absolute;
+    left: 60px;
+    top: 0;
+    padding: 0;
+    margin: 0;
+}
+
+.menu-title {
+    display: block;
+    color: #fff;
+    font-size: 16px;
+    padding: 10px 20px;
+    border-bottom: 1px solid #0079bf;
+}
+
+
+
+.icon-team::before {
+    content: "\1F465"; /* Unicode for team icon */
+}
+
+.icon-task::before {
+    content: "\270D"; /* Unicode for task icon (pencil) */
+}
+
+.icon-profile::before {
+    content: "\1F464"; /* Unicode for profile icon */
+}
+
+.icon-authentication::before {
+    content: "\1F512"; /* Unicode for authentication icon */
+}
+
+.icon-settings::before {
+    content: "\2699"; /* Unicode for settings icon */
+}

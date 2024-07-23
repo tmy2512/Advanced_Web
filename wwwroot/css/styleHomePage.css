@@ -1,0 +1,20 @@
+﻿.main {
+    top: 400px;
+    left: 100px;
+}
+.content-section {
+   
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+    color: blue;
+    font-size: 24px;
+    font-weight: bold;
+}
+.content-secton p {
+    color: blue;
+}

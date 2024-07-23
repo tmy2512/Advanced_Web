@@ -1,0 +1,26 @@
+﻿@* @model IEnumerable<ManagementAssistanceForBusinessWeb_OnlyRole.Models.UserModel>
+
+<select class="form-control" id="userSelect" required>
+    @foreach (var user in Model)
+    {
+                <option value="@user.UserID">@user.Username</option>
+    }
+</select> *@
+@model IEnumerable<ManagementAssistanceForBusinessWeb_OnlyRole.Models.UserModel>
+
+
+<div class="form-group">
+    <label for="userSelect">Assign task</label>
+    <div id="userSelect">
+        @foreach (var user in Model)
+        {
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="UserID" id="user@user.UserID" value="@user.UserID" required>
+                    <label class="form-check-label" for="user@user.UserID">
+                    @user.Username @user.UserID
+                    </label>
+                </div>
+        }
+    </div>
+</div>
+

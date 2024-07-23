@@ -1,0 +1,18 @@
+﻿.main {
+    position: relative;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+    margin: 80px 0 0 50px;
+    width: 100%;
+    px;
+}
+
+.content {
+    position: relative;
+    background-color: #f7f8fa;
+    width: 100%;
+    /* max-width: 1200px; */
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    height: 100vh;
+}

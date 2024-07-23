@@ -1,0 +1,204 @@
+﻿@model IEnumerable<ProjectModel>
+
+@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div id="board-details-container" class="board-details-container">
+    <div class="board-column">
+        <h2>Backlog</h2>
+@*         @foreach (var project in Model)
+        { *@
+              <div class="board-column">
+    <h2>Backlog</h2>
+
+    <!-- Sample Task Card -->
+    <div class="board-task-card" onclick="location.href='@Url.Action("GetTask", "Task")'">
+        <div class="board-task-header">id</div>
+        <div class="board-task-title">Title</div>
+        <div class="board-task-footer">
+            <span>currentDate.ToString("dd/MM/yyyy")</span>
+            <span>4</span>
+            <span class="board-tag">Tag</span>
+            <!-- Three Dots Dropdown -->
+            <div class="dropdown">
+                <button class="dropdown-btn">...</button>
+                <div class="dropdown-content">
+                    <a href="#">Option A</a>
+                    <a href="#">Option B</a>
+                </div>
+            </div>
+        </div>
+    </div>
+       <!-- Add New Task Button -->
+    <button class="add-task-btn">+ Add new task</button>
+</div>
+
+        @* } *@
+    </div>
+    <div class="board-column">
+        <h2>Waiting</h2>
+@*         @foreach (var project in Model)
+        { *@
+                <div class="board-task-card"  onclick="location.href='@Url.Action("GetTask", "Task")'">
+                        <div class="board-task-header">id</div>
+                        <div class="board-task-title">Title</div>
+                        <div class="board-task-footer">
+                                <span>currentDate.ToString("dd/MM/yyyy")</span>
+                            <span>4</span>
+                            <span class="board-tag">Tag</span>
+                        </div>
+                </div>
+        @* } *@
+    </div>
+    <div class="board-column">
+        <h2>Doing</h2>
+       @*  @foreach (var project in Model)
+         *@{
+                <div class="board-task-card"  onclick="location.href='@Url.Action("GetTask", "Task")'">
+                        <div class="board-task-header">id</div>
+                        <div class="board-task-title">Title</div>
+                        <div class="board-task-footer">
+                                <span>currentDate.ToString("dd/MM/yyyy")</span>
+                            <span>4</span>
+                            <span class="board-tag">Tag</span>
+                        </div>
+                </div>
+        @* } *@
+    </div>
+    <div class="board-column" asp >
+        <h2>Review</h2>
+       @*  @foreach (var project in Model)
+         *@{
+                <div class="board-task-card"  onclick="location.href='@Url.Action("GetTask", "Task")'">
+                       <div class="board-task-header">id</div>
+                        <div class="board-task-title">Title</div>
+                        <div class="board-task-footer">
+                                <span>currentDate.ToString("dd/MM/yyyy")</span>
+                            <span>4</span>
+                            <span class="board-tag">Tag</span>
+                        </div>
+                </div>
+        @* } *@
+    </div>
+</div>
+<style>
+    .board-details-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.board-details-container .board-column {
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    margin: 10px;
+    flex: 1;
+    min-width: 250px;
+}
+
+.board-details-container .board-column h2 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+.board-details-container .board-task-card {
+    background-color: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.board-details-container .board-task-header {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.board-details-container .board-task-title {
+    font-size: 1em;
+    margin-bottom: 5px;
+}
+
+.board-details-container .board-task-desc {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.board-details-container .board-task-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8em;
+}
+
+.board-details-container .board-tag {
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 3px;
+    padding: 2px 5px;
+}
+/* Button to add new task */
+.add-task-btn {
+    background-color: #4CAF50; /* Green background */
+    color: white; /* White text */
+    border: none; /* Remove border */
+    padding: 10px 20px; /* Add padding */
+    text-align: center; /* Center text */
+    text-decoration: none; /* Remove underline */
+    display: inline-block; /* Align button */
+    font-size: 16px; /* Increase font size */
+    margin: 10px 0; /* Add margin */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+/* Dropdown button */
+.dropdown {
+    position: relative; /* Position relative to parent */
+    display: inline-block; /* Align dropdown */
+}
+
+.dropdown-btn {
+    background: none; /* No background */
+    border: none; /* No border */
+    font-size: 20px; /* Font size */
+    cursor: pointer; /* Pointer cursor */
+}
+
+/* Dropdown content (hidden by default) */
+.dropdown-content {
+    display: none; /* Hide by default */
+    position: absolute; /* Absolute positioning */
+    background-color: #f9f9f9; /* Background color */
+    min-width: 160px; /* Minimum width */
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); /* Box shadow */
+    z-index: 1; /* Layer above other elements */
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    color: black; /* Text color */
+    padding: 12px 16px; /* Padding */
+    text-decoration: none; /* Remove underline */
+    display: block; /* Block display */
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {
+    background-color: #f1f1f1; /* Background color on hover */
+}
+
+/* Show the dropdown content on click */
+.dropdown:hover .dropdown-content {
+    display: block; /* Show dropdown */
+}
+
+</style>
+
