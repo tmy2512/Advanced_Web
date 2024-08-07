@@ -1,0 +1,65 @@
+﻿@model ManagementAssistanceForBusinessWeb_OnlyRole.Models.UserViewModels.UserDTOModel
+
+@using ManagementAssistanceForBusinessWeb_OnlyRole.Models
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor httpContextAccessor
+@{
+    ViewData["Title"] = "Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    // get userID and role from session
+    var userId = int.Parse(httpContextAccessor.HttpContext.Session.GetString("UserID"));
+    var role = httpContextAccessor.HttpContext.Session.GetString("Role");
+}
+<div class="container mt-5">
+    <div class="profile-card card shadow-sm">
+        <div class="card-body">
+            <h2 class="card-title mb-4">User Profile</h2>
+            <div class="profile-info">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h5 class="font-weight-bold">Username:</h5>
+                        <p>@Model.Username</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h5 class="font-weight-bold">Email:</h5>
+                        <p>@Model.Email</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h5 class="font-weight-bold">Phone Number:</h5>
+                        <p>@Model.PhoneNumber</p>
+                    </div>
+                    <div class="col-md-4 mt-3">
+                        <h5 class="font-weight-bold">Role:</h5>
+                        <p>@Model.Role</p>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 text-right">
+                <a href="/User/EditProfile" class="btn btn-primary">Edit Profile</a>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .profile-card {
+        border-radius: 10px;
+        overflow: hidden;
+        background: #ffffff;
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .profile-info h5 {
+        margin-bottom: 5px;
+    }
+
+    .profile-info p {
+        margin-bottom: 10px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+</style>

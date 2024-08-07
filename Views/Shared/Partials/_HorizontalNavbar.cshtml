@@ -1,7 +1,11 @@
-﻿@*
+﻿
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+    // get userID and role from session
+    var userId = int.Parse(httpContextAccessor.HttpContext.Session.GetString("UserID"));
+    var role = httpContextAccessor.HttpContext.Session.GetString("Role");
 }
 @using Microsoft.AspNetCore.Http
 @inject IHttpContextAccessor httpContextAccessor
@@ -11,20 +15,31 @@
 @* navbar *@
     <div class="navbar">
         <div class="navbar-left">
+        @if (role == "Admin")
+        {
             <form asp-controller="Project" asp-action="CreateNewProject" method="get">
                 <button type="submit" class="create-button">+ Create New</button>
             </form>
+            <a asp-controller="Project" asp-action="GetAllProject">Projects</a>
+
+        }
+        else
+        {
+            <button class="create-button" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)" onclick="return false;">+ Create New</button>
+            <p class="tooltip-text" style="display: none; color: red">You don't have any permission for this project</p>
+        }
+            
 
             @* <button asp-controller="Project" asp-action="CreateNewProject" class="create-button">+ Create New</button> *@
         </div>
         <div class="navbar-right">
-            <form class="search-form">
-                <input type="text" placeholder="Search...">
-                <button type="submit"><i class="icon icon-search"></i></button>
+            <form class="search-form"  action="/Task/GetAllTaskByProjectID" method="get" >
+                <input type="text" name="searchName" placeholder="Search...">
+            <button type="submit"><i class="icon icon-search"></i></button>
             </form>
-            <div class="icon-container">
+            @* <div class="icon-container">
                 <i class="icon icon-notification"></i>
-            </div>
+            </div> *@
             <div class="icon-container">
                 <i class="icon icon-user"></i>
                  @if (httpContextAccessor.HttpContext.Session.GetString("Username") != null)
@@ -39,4 +54,20 @@
         </div>
         </div>
     </div>
-   
+   <script>
+    // xu li hien thi tooltip khi phan quyen voi Add new project
+    function showTooltip(button) {
+        const tooltip = button.nextElementSibling;
+        tooltip.style.display = 'block';
+        tooltip.style.position = 'absolute';
+        tooltip.style.left = `${button.offsetLeft}px`;
+        tooltip.style.top = `${button.offsetTop + button.offsetHeight}px`;
+    }
+
+    function hideTooltip(button) {
+        const tooltip = button.nextElementSibling;
+        tooltip.style.display = 'none';
+    }
+
+    // search project by name
+   </script>

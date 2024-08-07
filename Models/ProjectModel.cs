@@ -17,10 +17,7 @@ namespace ManagementAssistanceForBusinessWeb_OnlyRole.Models
         public string Description { get; set; }
 
         [DataType(DataType.DateTime)]
-        public DateTime StartTime { get; set; }
-        public ProjectModel()
-        {
-            StartTime = DateTime.Now; // Set default value to current datetime
-        }
+        public DateTime StartTime { get; set; } = DateTime.Now;
+        
     }
 }

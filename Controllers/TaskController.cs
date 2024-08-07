@@ -2,7 +2,11 @@
 using ManagementAssistanceForBusinessWeb_OnlyRole.Models.TaskViewModels;
 using ManagementAssistanceForBusinessWeb_OnlyRole.Repository.TaskFolder;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.VisualBasic;
+using System.Threading.Tasks;
 using static ManagementAssistanceForBusinessWeb_OnlyRole.Models.TaskModel;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ManagementAssistanceForBusinessWeb_OnlyRole.Controllers
 {
@@ -13,52 +17,148 @@ namespace ManagementAssistanceForBusinessWeb_OnlyRole.Controllers
         {
             _taskRepository = taskRepository;
         }
-        public IActionResult GetTask()
-        {
-               return View();
-        }
+     
         // get list task by projectid
         [HttpGet]
-        public async Task<IActionResult> GetAllTaskByProjectID(int projectID, string name ="My")
+        public async Task<IActionResult> GetAllTaskByProjectID(int projectID, string error ="", string searchName="")
         {
-
-            var tasks = await _taskRepository.GetAllTaskByProjectID(projectID);
-            var todo_tasks = tasks.Where(p => p.Status == EStatus.ToDo);
-            var done_tasks = tasks.Where(p => p.Status == EStatus.Done);
-            var doing_tasks = tasks.Where(p => p.Status == EStatus.Doing);
-
-            Console.WriteLine("Test");
-            ViewBag.ProjectID = projectID;
-            ViewBag.Name = name;
-       
-            ViewBag.Tasks = new
+            IEnumerable<CreateNewTaskModel> tasks;
+			if (!string.IsNullOrEmpty(searchName))
             {
-                TodoTasks = todo_tasks,
-                DoneTasks = done_tasks,
-                DoingTasks = doing_tasks
-            };
+                tasks = await _taskRepository.SearchTasksByName(searchName);
+            }
+            else
+            {
+				tasks = await _taskRepository.GetAllTaskByProjectID(projectID);
+			}
+			var todo_tasks = tasks.Where(p => p.Status == EStatus.ToDo);
+			var done_tasks = tasks.Where(p => p.Status == EStatus.Done);
+			var doing_tasks = tasks.Where(p => p.Status == EStatus.Doing);
 
-            return View(tasks);
+			Console.WriteLine("Test");
+			ViewBag.ProjectID = projectID;
+			ViewBag.Error = error;
+
+			ViewBag.Tasks = new
+			{
+				TodoTasks = todo_tasks,
+				DoneTasks = done_tasks,
+				DoingTasks = doing_tasks
+			};
+
+
+			return View(tasks);
         }
 
-        // show form add new task
-        [HttpGet]
-        public IActionResult AddNewTask()
-        {
+		
+		// show form add new task or edit task
+		[HttpGet]
+        public async Task<IActionResult> AddNewTask(int taskID)
+        {  
+            if (taskID != 0)
+            {   
+                var result = await EditTaskModalPartialView(taskID);
+                return result;
+            }
             return View();
         }
+
+        // api xoa task theo id
+        [HttpDelete]
+        public IActionResult DeleteTaskByID(int taskID)
+        {
+            _taskRepository.DeleteTask(taskID);
+            return Ok();
+        }
+
+       
+        //show  Edit task form
+        [HttpGet]
+        public async Task<IActionResult> EditTaskModalPartialView(int taskID)
+        {
+            var foundTask = await _taskRepository.GetTaskById(taskID);
+            var task = new 
+            {
+                id = foundTask.ID,
+                name = foundTask.Name,
+                content = foundTask.Content,
+                due_date = foundTask.DueDate,
+                project_id = foundTask.ProjectID,
+                user_id = foundTask.UserID,
+                update_date = foundTask.UpdatedAt,
+                status = foundTask.Status
+            };
+            
+            return new JsonResult(Ok(task));
+        }
+        //[HttpGet]
+        //public IActionResult AddNewTask()
+        //{
+        //    return View();
+        //}
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult AddNewTask(CreateNewTaskModel newTask)
+        public async Task<IActionResult> Add_Update_Task(CreateNewTaskModel newTask)
         {
-            if(ModelState.IsValid)
+            var ErrorMessage = "";
+
+            if (ModelState.IsValid)
             {
-                _taskRepository.AddNewTask(newTask);
-                return RedirectToAction("GetAllTaskByProjectID", new { projectID = newTask.ProjectID });
+                    if (newTask.ID != null && newTask.ID != 0)
+                    {
+                        return await UpdateTask(newTask);
+
+                    }
+                    else
+                    {
+                        _taskRepository.AddNewTask(newTask);
+                    }
+
             }
-            ViewBag.ErrorMessage = "Kiểm tra lại thông tin đầu vào";
-            return View();
+            else
+            {
+                foreach (var state in ModelState.Values)
+                {
+                    foreach (var error in state.Errors)
+                    {
+                        ErrorMessage += error.ErrorMessage + "\n";
+                        //ViewBag.Error = err;
+                    }
+                }
+            }
             
+            return RedirectToAction("GetAllTaskByProjectID", new { projectID = newTask.ProjectID, error = ErrorMessage });
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateTask(CreateNewTaskModel updatedTask)
+        {
+            var ErrorMessage = "";
+            if (ModelState.IsValid)
+            {
+                if(updatedTask == null)
+                {
+                    ErrorMessage = "abc";
+                }
+                else
+                {
+                    _taskRepository.UpdateTaskByID(updatedTask);
+                }
+            }
+            else
+            {
+                foreach (var state in ModelState.Values)
+                {
+                    foreach (var error in state.Errors)
+                    {
+                        ErrorMessage += error.ErrorMessage + "\n";
+                    }
+                }
+
+                //ErrorMessage += "Kiểm tra lại thông tin đầu vào";
+            }
+
+            return RedirectToAction("GetAllTaskByProjectID", new { projectID = updatedTask.ProjectID, error = ErrorMessage });
         }
     }
 }

@@ -29,7 +29,6 @@ namespace ManagementAssistanceForBusinessWeb_OnlyRole.Models
         [MinLength(8)] // Adjust min length as needed
         public string Password { get; set; }
 
-        // Navigation property
         public enum ERole
         {
             Admin, User

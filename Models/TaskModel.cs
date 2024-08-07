@@ -9,6 +9,12 @@ namespace ManagementAssistanceForBusinessWeb_OnlyRole.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)] // Auto increment
         public int ID { get; set; }
+        [StringLength(10, MinimumLength = 10, ErrorMessage = "VerifyKey must be exactly 10 characters long.")]
+        [RegularExpression(@"^[0-9].*", ErrorMessage = "VerifyKey must start with a number.")]
+        public string VerifyKey
+        {
+            get; set;
+        }
 
         [Required]
         [MaxLength(100)]

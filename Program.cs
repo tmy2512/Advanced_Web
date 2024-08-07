@@ -14,6 +14,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// Add AutoMapper
+builder.Services.AddAutoMapper(typeof(Program));
+
 // Add services to IHttpContextAccessor
 builder.Services.AddHttpContextAccessor();
 
@@ -42,6 +45,10 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+// Cấu hình Identity va cac chinh sach phan quyen
+//builder.Services.AddIdentity<UserModel, IdentityRole>()
+//    .AddEntityFrameworkStores<ModelDbContext>()
+//    .AddDefaultTokenProviders();
 
 var app = builder.Build();
 

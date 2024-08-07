@@ -1,129 +1,327 @@
-﻿@model IEnumerable<ManagementAssistanceForBusinessWeb_OnlyRole.Models.TaskViewModels.CreateNewTaskModel>
+﻿  @model IEnumerable<ManagementAssistanceForBusinessWeb_OnlyRole.Models.TaskViewModels.CreateNewTaskModel>
 @using ManagementAssistanceForBusinessWeb_OnlyRole.Models
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor httpContextAccessor
 
 @{
-    ViewData["Title"] = "Home Page";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    // Retrieve the lists from ViewData
+	ViewData["Title"] = "Home Page";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	// get userID and role from session 
+	var userId = int.Parse(httpContextAccessor.HttpContext.Session.GetString("UserID"));
+	var role = httpContextAccessor.HttpContext.Session.GetString("Role");
+	// Get the string value from session and convert to boolean
+	var isLoggedInString = httpContextAccessor.HttpContext.Session.GetString("IsLoggedIn");
+	bool isLoggedIn = bool.TryParse(isLoggedInString, out bool result) ? result : false;
 }
 
+
+
+
+<p class="error text-danger">@ViewBag.Error</p>
+
+<!-- Delete Confirmation Modal -->
+@*  <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteButton" onclick="confirmDeleteTask()">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div> *@
 
 <div id="board-details-container" class="board-details-container">
    <div class="board-column">
-    @* <h2>To do for Project @ViewBag.ProjectID @ViewBag.Name</h2> *@
-    <h2>To do</h2>
-        @foreach (var task in @ViewBag.Tasks.TodoTasks)
-        {
-         <div class="board-task-card">
-         <div class="board-task-header">
-                    <span>@task.Name</span>
-            <div class="dropdown">
-                <span href="#" class="icon-container">
-                   <i class="icon icon-ellipsis"></i>
-                </span>
-                <div class="dropdown-content">
-                   <a >Edit</a>
-                   <a href="#">Remove</a>
-                </div>
-            </div>
-        </div>
-        <div class="board-task-title">Title</div>
-        <div class="board-task-footer">
-               <span>Updated at: @task.UpdatedAt.ToString("dd/MM/yyyy")</span>
-               @* <span>@task.ProjectID</span> *@
-              <span class="board-tag">Tag</span>
-        </div>
-    </div>
-    }
-    <button class="add-task-btn" data-toggle="modal" data-target="#addTaskModal"  onclick="setStatusInModal('ToDo')">+ Add new task</button>
-    
-    </div>
+		@* <h2>To do for Project @ViewBag.ProjectID @ViewBag.Name</h2> *@
+	<h2>To do</h2>
+		@foreach (var task in @ViewBag.Tasks.TodoTasks)
+		{
+				 <div class="board-task-card">
+				 <div class="board-task-header">
+							<span>@task.Name</span>
+					<div class="dropdown">
+						<span href="#" class="icon-container">
+						   <i class="icon icon-ellipsis"></i>
+						</span>
+						<div class="dropdown-content">
 
-    @* <!-- Sample Task Card --> *@
-   
-    <div class="board-column">
-    <h2>Doing</h2>
-        @foreach (var task in @ViewBag.Tasks.DoingTasks)
-        {
-             <div class="board-task-card">
-             <div class="board-task-header">
-                        <span>@task.Name</span>
-                <div class="dropdown">
-                    <span href="#" class="icon-container">
-                       <i class="icon icon-ellipsis"></i>
-                    </span>
-                    <div class="dropdown-content">
-                       <a >Edit</a>
-                       <a href="#">Remove</a>
-                    </div>
-                </div>
-            </div>
-            <div class="board-task-title">Title</div>
-            <div class="board-task-footer">
-                    <span>Updated at: @task.UpdatedAt.ToString("dd/MM/yyyy")</span>
-                    @* <span>@task.ProjectID</span> *@
-                    <span class="board-tag">Tag</span>
-            </div>
-        </div>
-        }
-        <button class="add-task-btn" data-toggle="modal" data-target="#addTaskModal" data-status="Doing" onclick="setStatusInModal('Doing')">+ Add new task</button>
-    </div>
+							@if (userId == @task.UserID || role == "Admin" || isLoggedIn == false)
+							{
+								<a data-id="@task.ID" class="edit-task" onclick="showModalEditTask(@task.ID)">Edit</a>
+							}
+							else
+							{
+								<p> you don't have any permission of this task</p>
+							}
+							@if (role == "Admin")
+							{
+								<a data-id="@task.ID" onclick="showModalDeleteTask(@task.ID)">Remove</a>
+							}
+						</div>
+					</div>
+				</div>
+				<div class="board-task-title">Title</div>
+				<div class="board-task-footer">
+					   <span>Updated at: @task.UpdatedAt.ToString("dd/MM/yyyy")</span>
+					@* <span>@task.ProjectID</span> *@
+					<span class="board-tag">Project @task.ProjectID</span>
+				</div>
+			</div>
+		}
+		@if (role == "Admin")
+		{
+			<button class="add-task-btn" data-toggle="modal" data-target="#addTaskModal" data-status="0" onclick="setStatusInModal(0)">+ Add new task</button>
+		}
+		else
+		{
+			<button class="add-task-btn" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)" onclick="return false;">+ Add new task</button>
+			<p class="tooltip-text" style="display: none; color: red">You don't have any permission for this task</p>
+		}
 
-    @* <!-- Sample Task Card --> *@
+	</div>
 
-    <div class="board-column">
-    <h2>Done</h2>
-        @foreach (var task in @ViewBag.Tasks.DoneTasks)
-        {
-            <div class="board-task-card">
-                <div class="board-task-header">
-                            <span>@task.Name</span>
-                    <div class="dropdown">
-                        <span href="#" class="icon-container">
-                           <i class="icon icon-ellipsis"></i>
-                        </span>
-                        <div class="dropdown-content">
-                            <a >Edit</a>
-                            <a href="#">Remove</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="board-task-title">Title</div>
-                <div class="board-task-footer">
-                    <span>Updated at: @task.UpdatedAt.ToString("dd/MM/yyyy")</span>
-                    @* <span>@task.ProjectID</span> *@
-                    <span class="board-tag">Tag</span>
+	@* <!-- Sample Task Card --> *@
 
-                </div>
-            </div>
-            }
-                <button class="add-task-btn" data-toggle="modal" data-target="#addTaskModal"  data-status="Done"  onclick="setStatusInModal('Done')">+ Add new task</button>
-     
-    </div>
+	<div class="board-column">
+	<h2>Doing</h2>
+		@foreach (var task in @ViewBag.Tasks.DoingTasks)
+		{
+					 <div class="board-task-card">
+					 <div class="board-task-header">
+								<span>@task.Name</span>
+						<div class="dropdown">
+							<span href="#" class="icon-container">
+							   <i class="icon icon-ellipsis"></i>
+							</span>
+							<div class="dropdown-content">
+								@if (userId == @task.UserID || role == "Admin")
+								{
+									<a data-id="@task.ID" class="edit-task" onclick="showModalEditTask(@task.ID)">Edit</a>
+								}
+								else
+								{
+									<p> you don't have any permission of this task</p>
+								}
+								@if (role == "Admin")
+								{
+									<a data-id="@task.ID" onclick="showModalDeleteTask(@task.ID)">Remove</a>
+								}
+							</div>
+						</div>
+					</div>
+					<div class="board-task-title">Title</div>
+					<div class="board-task-footer">
+							<span>Updated at: @task.UpdatedAt.ToString("dd/MM/yyyy")</span>
+					@* <span>@task.ProjectID</span> *@
+					<span class="board-tag">Project @task.ProjectID</span>
+					</div>
+				</div>
+		}
+		@if (role == "Admin")
+		{
+			<button class="add-task-btn" data-toggle="modal" data-target="#addTaskModal" data-status="1" onclick="setStatusInModal(1)">+ Add new task</button>
+		}
+		else
+		{
+			<button class="add-task-btn" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)" onclick="return false;">+ Add new task</button>
+			<p class="tooltip-text" style="display: none; color: red">You don't have any permission for this task</p>
+		}
+	</div>
 
-    @* <!-- Sample Task Card --> *@
+	@* <!-- Sample Task Card --> *@
+
+	<div class="board-column">
+	<h2>Done</h2>
+		@foreach (var task in @ViewBag.Tasks.DoneTasks)
+		{
+					<div class="board-task-card">
+						<div class="board-task-header">
+									<span>@task.Name</span>
+							<div class="dropdown">
+								<span href="#" class="icon-container">
+								   <i class="icon icon-ellipsis"></i>
+								</span>
+								<div class="dropdown-content">
+									@if (userId == @task.UserID || role == "Admin")
+									{
+										<a data-id="@task.ID" class="edit-task" onclick="showModalEditTask(@task.ID)">Edit</a>
+									}
+									else
+									{
+										<p> you don't have any permission of this task</p>
+									}
+									@if (role == "Admin")
+									{
+										<a data-id="@task.ID" onclick="showModalDeleteTask(@task.ID)">Remove</a>
+									}
+								</div>
+							</div>
+						</div>
+						<div class="board-task-title">Title</div>
+						<div class="board-task-footer">
+							<span>Updated at: @task.UpdatedAt.ToString("dd/MM/yyyy")</span>
+					@* <span>@task.ProjectID</span> *@
+					<span class="board-tag">Project @task.ProjectID</span>
+
+						</div>
+					</div>
+		}
+		@if (role == "Admin")
+		{
+			<button class="add-task-btn" data-toggle="modal" data-target="#addTaskModal" data-status="2" onclick="setStatusInModal(2)">+ Add new task</button>
+		}
+		else
+		{
+			<button class="add-task-btn" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)" onclick="return false;">+ Add new task</button>
+			<p class="tooltip-text" style="display: none; color: red">You don't have any permission for this task</p>
+		}
+
+	</div>
+
+	@* <!-- Sample Task Card --> *@
 </div>
 </div>
 
-@* Render partialview *@
+@* Render partialview( modal) *@
 @await Html.PartialAsync("AddNewTask", new ManagementAssistanceForBusinessWeb_OnlyRole.Models.TaskViewModels.CreateNewTaskModel { ProjectID = ViewBag.ProjectID })
+@await Html.PartialAsync("DeleteModalPartialView", new ManagementAssistanceForBusinessWeb_OnlyRole.Models.TaskViewModels.CreateNewTaskModel())
+
 <script>
-    function setStatusInModal(status) {
-    var modal = $('#addTaskModal');
-    modal.find('input[name="status"]').prop('checked', false); // Uncheck all radio buttons
-    modal.find('input[value="' + status + '"]').prop('checked', true); // Check the corresponding radio button
-    
-    console.log('dsfhjdsk');
-    // load user with role = user from user table
-    $.ajax({
-        url: '/User/GetUserByRole',
-        type: 'GET',
-        success: function(data) {
-            modal.find('#userSelectContainer').html(data);
-        }
-    });
-    modal.modal('show'); // Show the modal
-}
+	let taskid;
+
+	// hide search-form
+	document.addEventListener("DOMContentLoaded", function() {
+	// Code to be executed when the DOM is ready
+		document.querySelector('.search-form').style.display = 'none'
+	}); 
+	
+	// clear form when change edit to add modal
+	function clearForm(){
+		var modal = $('#addTaskModal');
+		modal.find('#taskName').val('');
+		modal.find('#taskContent').val('');
+		// modal.find('#taskIdInput').val('');
+		modal.find('#taskUserID').val('');
+		let today = new Date();
+
+		// Format the date as yyyy-mm-dd
+		let year = today.getFullYear();
+		let month = (today.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+		let day = today.getDate().toString().padStart(2, '0');
+
+		// Combine year, month, and day into the desired format
+		let formattedDate = `${year}-${month}-${day}`;
+
+		modal.find('#taskDueDate').val(formattedDate);
+
+	}
+
+
+	// Set giá trị mặc định cho status and load user, load add new task modal
+	function setStatusInModal(status) {
+		var modal = $('#addTaskModal');
+		$('#addTaskModalLabel').text("Add new task");
+		$('#btnSave').text('Submit');
+		modal.find('input[name="status"]').prop('checked', false); // Uncheck all radio buttons
+		modal.find('input[value="' + status + '"]').prop('checked', true); // Check the corresponding radio button
+
+		// load user with role = user from user table
+		$.ajax({
+			url: '/User/GetUserByRole',
+			type: 'GET',
+			success: function(data) {
+				modal.find('#userSelectContainer').html(data);
+			}
+		});
+		modal.modal('show');
+		clearForm();
+	}
+
+
+// load form edit task by id 
+	function showModalEditTask(taskID) {
+		var modal = $('#addTaskModal');
+		// console.log(taskID);
+		$('#addTaskModalLabel').text("Edit task");
+		$('#btnSave').text('Save');
+
+		$.ajax({
+			url: `/Task/AddNewTask?taskID=${taskID}`,
+			type: 'GET',
+			// dataType: 'json',
+			success: function(data) {
+				// modal.find('.modal-body-edit').html(data);
+				 // Gán giá trị cho từng thẻ input
+				modal.find('#taskName').val(data.value.name);
+				modal.find('#taskContent').val(data.value.content);
+				var due_date = new Date(data.value.due_date);
+				var formattedDate = due_date.toISOString().split('T')[0];
+				modal.find('#taskDueDate').val(formattedDate);
+				modal.find('#projectIdInput').val(data.value.project_id);
+				modal.find('#taskIdInput').val(taskID);
+				modal.find('#taskUserID').val(data.value.user_id);
+
+
+				// // Đặt giá trị cho radio button
+				modal.find('input[name="status"][value="' + data.value.status + '"]').prop('checked', true);
+				// làm rỗng error
+				modal.find('.text-danger').text('');
+				modal.modal('show');
+			},
+			error: function() {
+				alert('An error occurred while loading the edit form.');
+			}
+		});
+	}
+
+
+	
+	function showModalDeleteTask(taskID) {
+		taskid = taskID;
+		console.log(taskID);
+		$('#deleteModal').modal('show');
+	}
+	function confirmDeleteTask() {
+		console.log(taskid);
+		$.ajax({
+			url: `/Task/DeleteTaskByID?taskID=${taskid}`,
+			type: 'DELETE',
+			contentType: 'application/json',
+			success: function(data) {
+				$('#deleteModal').modal('hide');
+				// Remove the deleted task row from the table
+				location.reload();
+			},
+			error: function(xhr, status, error) {
+				console.error('Error:', error);
+			}
+		});
+	}
+
+	// xu li hien thi tooltip khi phan quyen voi Add new task
+	function showTooltip(button) {
+		const tooltip = button.nextElementSibling;
+		tooltip.style.display = 'block';
+		tooltip.style.position = 'absolute';
+		tooltip.style.left = `${button.offsetLeft}px`;
+		tooltip.style.top = `${button.offsetTop + button.offsetHeight}px`;
+	}
+
+	function hideTooltip(button) {
+		const tooltip = button.nextElementSibling;
+		tooltip.style.display = 'none';
+	}
+
 
 //    $(document).ready(function() {
 //     $('#addTaskModal').on('show.bs.modal', function(event) {
@@ -139,149 +337,154 @@
 
 
 </script>
+@section Scripts {
+					<partial name="_ValidationScriptsPartial"/>
+}
 <style>
-    .board-details-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    padding: 20px;
+	.board-details-container {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	padding: 20px;
 }
 
 .board-details-container .board-column {
-    background-color: #fff;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    padding: 10px;
-    margin: 10px;
-    flex: 1;
-    min-width: 250px;
+	background-color: #fff;
+	border-radius: 5px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	padding: 10px;
+	margin: 10px;
+	flex: 1;
+	min-width: 250px;
 }
 
 .board-details-container .board-column h2 {
-    font-size: 1.2em;
-    margin-bottom: 10px;
+	font-size: 1.2em;
+	margin-bottom: 10px;
 }
 
 .board-details-container .board-task-card {
-    background-color: #fafafa;
-    border: 1px solid #eee;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    padding: 10px;
-    cursor: pointer;
+	background-color: #fafafa;
+	border: 1px solid #eee;
+	border-radius: 5px;
+	margin-bottom: 10px;
+	padding: 10px;
+	cursor: pointer;
 }
 .board-details-container .board-task-header span {
-    font-weight: bold;
+	font-weight: bold;
 }
 
 .board-details-container .board-task-header {
-    margin-bottom: 5px;
+	margin-bottom: 5px;
 }
 
 .board-details-container .board-task-title {
-    font-size: 1em;
-    margin-bottom: 5px;
+	font-size: 1em;
+	margin-bottom: 5px;
 }
 
 .board-details-container .board-task-desc {
-    font-size: 0.9em;
-    color: #666;
-    margin-bottom: 10px;
+	font-size: 0.9em;
+	color: #666;
+	margin-bottom: 10px;
 }
 
 .board-details-container .board-task-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.8em;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	font-size: 0.8em;
 }
 
 .board-details-container .board-tag {
-    background-color: #007bff;
-    color: #fff;
-    border-radius: 3px;
-    padding: 2px 5px;
+	background-color: #007bff;
+	color: #fff;
+	border-radius: 3px;
+	padding: 2px 5px;
 }
 /* Button to add new task */
 .add-task-btn {
-    background-color: #4CAF50; /* Green background */
-    color: white; /* White text */
-    border: none; /* Remove border */
-    padding: 10px 20px; /* Add padding */
-    text-align: center; /* Center text */
-    text-decoration: none; /* Remove underline */
-    display: inline-block; /* Align button */
-    font-size: 16px; /* Increase font size */
-    margin: 10px 0; /* Add margin */
-    cursor: pointer; /* Pointer cursor on hover */
+	background-color: #4CAF50; /* Green background */
+	color: white; /* White text */
+	border: none; /* Remove border */
+	padding: 10px 20px; /* Add padding */
+	text-align: center; /* Center text */
+	text-decoration: none; /* Remove underline */
+	display: inline-block; /* Align button */
+	font-size: 16px; /* Increase font size */
+	margin: 10px 0; /* Add margin */
+	cursor: pointer; /* Pointer cursor on hover */
 }
 
 /* Container for the dropdown button */
 .board-task-header .dropdown {
-    position: relative; /* Relative positioning for the dropdown */
-    display: inline-block; /* Align dropdown */
-    left: 80%;
+	position: relative; /* Relative positioning for the dropdown */
+	display: inline-block; /* Align dropdown */
+	left: 80%;
 }
 
 .board-task-header .dropdown:hover .icon-container {
-    background-color: #f1f1f1;
-    /* height: 10px; */
+	background-color: #f1f1f1;
+	/* height: 10px; */
 }
 
 .board-task-header .icon-container {
-    color: #fff;
-    text-decoration: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding:  0;
-    transition: background-color 0.3s;
-    width: 100%;
+	color: #fff;
+	text-decoration: none;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding:  0;
+	transition: background-color 0.3s;
+	width: 100%;
 }
 
-    .board-task-header.icon-container > i:hover {
-       background-color: #f1f1f1;
-    }
+	.board-task-header.icon-container > i:hover {
+	   background-color: #f1f1f1;
+	}
 
-/* .vertical-navbar .icon {
-    font-size: 15px;
-}
- */
 .board-task-header .dropdown-content {
-    display: none;
-    position: absolute;
-    left: 60px; /* Aligns the submenu to the right of the main menu */
-    top: 0;
-    background-color: white;
-    /* box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); */
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    width: 200px;
+	display: none;
+	position: absolute;
+	left: 60px; /* Aligns the submenu to the right of the main menu */
+	top: 0;
+	background-color: white;
+	/* box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); */
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	width: 200px;
 }
  .board-task-header .dropdown-content a {
-        color: black;
-        text-decoration: none;
-        display: block;
-        padding: 10px 20px;
-        transition: background-color 0.3s;
-    }
+		color: black;
+		text-decoration: none;
+		display: block;
+		padding: 10px 20px;
+		transition: background-color 0.3s;
+	}
 
-    .board-task-header .dropdown-content a:hover {
-             background-color: #f1f1f1;
-        }
+	.board-task-header .dropdown-content a:hover {
+			 background-color: #f1f1f1;
+		}
 
 .board-task-header .dropdown:hover .dropdown-content {
-    display: block;
-    position: absolute;
-    left: 20px;
-    top: 0;
-    padding: 0;
-    margin: 0;
+	display: block;
+	position: absolute;
+	left: 20px;
+	top: 0;
+	padding: 0;
+	margin: 0;
+}
+.dropdown-content p {
+		color: red;
+		position: relative;
+		display: inline-block;
+		left: 10px;
 }
 .icon-ellipsis::before {
-    content: "\2026"; /* Unicode for horizontal ellipsis (three dots) */
-    color: black;
+	content: "\2026"; /* Unicode for horizontal ellipsis (three dots) */
+	color: black;
 }
 
 </style>

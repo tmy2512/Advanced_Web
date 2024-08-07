@@ -2,16 +2,26 @@
     ViewData["Title"] = "Home Page";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@model IEnumerable<ProjectModel>
+@model IEnumerable<ManagementAssistanceForBusinessWeb_OnlyRole.Models.ProjectViewModels.ProjectDTO>
 
 
 <div class="projectboard">
     @foreach(var project in Model)
     {
+                    <div class="dropdown">
+                                  <span href="#" class="icon-container">
+                                           <i class="icon icon-ellipsis"></i>
+                                        </span>
+                                      <div class="dropdown-content">
+                                                <a onclick="showModalEditProject(@project.ID)">Edit</a>
+                                                <a onclick="showModalDeleteProject(@project.ID)">Remove</a>
+                                      </div>
+                                    </div>
                   <div class="column" data-id="@project.ID" onclick="redirectToTaskForProject(this)">
                     <h2>Project</h2>
                     <div class="task-card">
                         <div class="task-header">@project.Name</div>
+                         
                         <div class="task-title">@project.Description</div>
                         <div class="task-footer">
                             <span>@project.StartTime</span>
@@ -22,32 +32,68 @@
              
     }
     
-            <!-- Thêm các task khác tương tự -->
-          @*           <div class="column">
-            <h2>Review</h2>
-            <div class="task-card">
-                <div class="task-header">#PM0013</div>
-                <div class="task-title">Admin Layout Design</div>
-                <div class="task-desc">Create a responsive admin dashboard layout.</div>
-                <div class="task-footer">
-                    <span>14/08/2021</span>
-                    <span>4/4</span>
-                    <span class="tag">UI/UX</span>
-                </div>
-            </div>
-        </div> *@
+          
 </div>
+@await Html.PartialAsync("ProjectDetail", new ManagementAssistanceForBusinessWeb_OnlyRole.Models.ProjectViewModels.ProjectDTO())
+@await Html.PartialAsync("DeleteProjectModalPartialView", new ManagementAssistanceForBusinessWeb_OnlyRole.Models.ProjectViewModels.ProjectDTO ())
+
 <script>
-    let projectID;
+    let project_ID;
     // chuyen huong xu li toi Task
     function redirectToTaskForProject(element) {
         var projectID = $(element).data('id');
         console.log(projectID);
         window.location.href = `/Task/GetAllTaskByProjectID?projectID=${projectID}`;
         // window.location.href = `/Task/GetAllTaskByProjectID?projectID=${projectID}&name=My`;
-
     }
+    function showModalEditProject(projectID) {
+        console.log('jjjj');
+        var modal = $('#updateProjectModal');
+        $.ajax({
+            url: `/Project/ProjectDetail?projectID=${projectID}`,
+            type: 'GET',
+            success: function(data) {
+                modal.find('#projectIdInput').val(data.value.id);
+                modal.find('#projectName').val(data.value.name);
+                modal.find('#projectDescription').val(data.value.description);
+                 // Định dạng lại startTime
+                var startTime = new Date(data.value.startTime);
+                var formattedStartTime = startTime.toISOString().slice(0, 16);
+
+                modal.find('#projectStartTime').val(formattedStartTime);
+                modal.modal('show');
+            },
+            error: function() {
+            alert('An error occurred while loading the edit form.');
+        }
+        });
+    }
+    function showModalDeleteProject(projectId) {
+        var modal = $('#deleteModal');
+        project_ID = projectId;
+        console.log(project_ID);
+        modal.modal('show');
+    }
+   function confirmDeleteProject() {
+    console.log(project_ID);
+     $.ajax({
+    url: `/Project/DeleteProject?projectID=${project_ID}`,
+    type: 'DELETE',
+    contentType: 'application/json',
+    success: function(data) {
+      alert('Project deleted successfully!');
+      location.reload();
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+      console.error('There was a problem with the ajax operation:', textStatus, errorThrown);
+    }
+  });
+}
+
 </script>
+@section Scripts {
+                <partial name="_ValidationScriptsPartial"/>
+}
 <style>
    /*  body {
     font-family: Arial, sans-serif;
@@ -115,5 +161,67 @@
     border-radius: 3px;
     padding: 2px 5px;
 }
+/* Container for the dropdown button */
+.projectboard .dropdown {
+    position: absolute; /* Relative positioning for the dropdown */
+    display: inline-block; /* Align dropdown */
+    left: 80%;
+}
 
+.projectboard .dropdown:hover .icon-container {
+    background-color: #f1f1f1;
+    /* height: 10px; */
+}
+
+.projectboard .icon-container {
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding:  0;
+    transition: background-color 0.3s;
+    width: 100%;
+}
+
+    .projectboard.icon-container > i:hover {
+       background-color: #f1f1f1;
+    }
+
+.projectboard .dropdown-content {
+    display: none;
+    position: absolute;
+    left: 60px; /* Aligns the submenu to the right of the main menu */
+    top: 0;
+    background-color: white;
+    /* box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); */
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 200px;
+}
+ .projectboard .dropdown-content a {
+        color: black;
+        text-decoration: none;
+        display: block;
+        padding: 10px 20px;
+        transition: background-color 0.3s;
+    }
+
+    .projectboard .dropdown-content a:hover {
+             background-color: #f1f1f1;
+        }
+
+.projectboard .dropdown:hover .dropdown-content {
+    display: block;
+    position: absolute;
+    left: 20px;
+    top: 0;
+    padding: 0;
+    margin: 0;
+}
+.icon-ellipsis::before {
+    content: "\2026"; /* Unicode for horizontal ellipsis (three dots) */
+    color: black;
+}
 </style>

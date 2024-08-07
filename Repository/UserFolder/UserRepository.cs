@@ -3,6 +3,7 @@ using ManagementAssistanceForBusinessWeb_OnlyRole.Models;
 using ManagementAssistanceForBusinessWeb_OnlyRole.Models.UserViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel;
 using static ManagementAssistanceForBusinessWeb_OnlyRole.Models.UserModel;
 
 namespace ManagementAssistanceForBusinessWeb_OnlyRole.Repository.UserFolder
@@ -40,6 +41,7 @@ namespace ManagementAssistanceForBusinessWeb_OnlyRole.Repository.UserFolder
                 Username = newAccount.Username,
                 Email = newAccount.Email,
                 PhoneNumber = newAccount.PhoneNumber,
+                Role = newAccount.Role,
                 Password = _passwordHasher.HashPassword(new UserModel(), newAccount.Password)
             };
             _context.Add(account);
@@ -65,7 +67,19 @@ namespace ManagementAssistanceForBusinessWeb_OnlyRole.Repository.UserFolder
 
         public async  Task<IEnumerable<UserModel>> GetUsersByRoleAsync()
         {
-            return await _context.Members.Where(u => u.Role == ERole.Admin).ToListAsync();
+            return await _context.Members.Where(u => u.Role == ERole.User).ToListAsync();
         }
+
+        // hiển thị danh sách tất cả user bao gồm cả user và admin => chi co admin mới xem được 
+		public async Task<IEnumerable<UserModel>> GetAllUsers()
+		{
+            return await _context.Members.ToListAsync();
+		}
+        public async Task<UserModel> GetUserByID(int userID)
+        {
+            return await _context.Members.FirstOrDefaultAsync(u => u.UserID == userID);
+        }
+
+      
     }
 }

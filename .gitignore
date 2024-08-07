@@ -1,3 +1,15 @@
 .vs/
 bin/
 obj/
+clone private project
+//ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICUAhG32cLdm4l92J750hqZaIPhVwp1BfrAklhURSfdD Admin@Admin-PC
+HOW TO CLONE PRIVATE PROJECT
+(Open SSH to get link)
+1. Create ssh-key
+run cmd:  ssh-keygen
+2. get ssh key in .ssh( id_.... /C/User/Admin/.ssh)
+ and provide for partner to add into project
+3. partner: Add new SSH Key, paste parner's key 
+into Key
+4. Test git clone
+

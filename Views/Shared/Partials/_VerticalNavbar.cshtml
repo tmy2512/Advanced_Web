@@ -2,6 +2,12 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+    // get userID and role from session
+    var userId = int.Parse(httpContextAccessor.HttpContext.Session.GetString("UserID"));
+    var role = httpContextAccessor.HttpContext.Session.GetString("Role");
+    // Get the string value from session and convert to boolean
+    var isLoggedInString = httpContextAccessor.HttpContext.Session.GetString("IsLoggedIn");
+    bool isLoggedIn = bool.TryParse(isLoggedInString, out bool result) ? result : false;
 }
 @* khai bao de lay user luu tronmg session *@
 @using Microsoft.AspNetCore.Http
@@ -40,17 +46,23 @@
       <div class="dropdown-content">
         <span class="menu-title">Team Overview</span>
         <a asp-controller="Project" asp-action="GetAllProject">Projects</a>
-        <a href="#">Employee</a>
+        @if(role == "Admin") {
+                <a asp-controller="User" asp-action="GetAllUsers">User</a>
+        }               
+        else
+        {
+            <a style="display: none">User</a>
+            //<p> you don't have any permission to  see all of users</p>
+        }
       </div>
     </li>
-    <li class="dropdown">
+    @* <li class="dropdown">
       <span href="#" class="icon-container">
         <i class="icon icon-task"></i>
       </span>
       <div class="dropdown-content">
         <span class="menu-title">Tasks</span>
-        <a href="#">Projects</a>
-        <a href="#">Employee</a>
+        <a href="#">All tasks</a>
       </div>
     </li>
     <li class="dropdown">
@@ -58,10 +70,11 @@
         <i class="icon icon-profile"></i>
       </span>
       <div class="dropdown-content">
-        <span class="menu-title">Profile</span>
+            <span class="menu-title">Profile</span>
+                <a asp-controller="User" asp-action="ProfileUser" asp-route-id="@userId">Profile detail</a>
         
       </div>
-    </li>
+    </li> *@
     <li class="dropdown">
       <span href="#" class="icon-container">
         <i class="icon icon-authentication"></i>
@@ -70,9 +83,15 @@
         <span class="menu-title">Authentication</span>
         <a asp-controller="User" asp-action="LoginViewModel">Login</a>
         <a asp-controller="User" asp-action="RegisterAccountForUser">Sign up</a>
-        <a asp-controller="User" asp-action="CreateAccountForAdmin">Create account for admin</a>
+                @if(role == "Admin")
+                {
+                    <a asp-controller="User" asp-action="CreateAccountForAdmin">Create account for admin</a>
+                }
+                else
+                {
+                    <a style="display: none">Create account for admin</a>
+                }
         <a href="#" onclick="showLogoutModal()">Sign out</a>
-        <a href="#">Forgot password</a>
       </div>
     </li>
     <li>

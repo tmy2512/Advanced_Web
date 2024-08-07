@@ -10,5 +10,8 @@ namespace ManagementAssistanceForBusinessWeb_OnlyRole.Repository.UserFolder
         void CreateAccountForAdmin(CreateAccountForAdminViewModel newAccount);
         UserModel FindUser(String email, String password);
         Task<IEnumerable<UserModel>> GetUsersByRoleAsync();
+        Task<IEnumerable<UserModel>> GetAllUsers();
+        Task<UserModel> GetUserByID(int userID);
+
     }
 }

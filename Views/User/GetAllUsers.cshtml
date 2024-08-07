@@ -1,0 +1,84 @@
+﻿@model IEnumerable<ManagementAssistanceForBusinessWeb_OnlyRole.Models.UserViewModels.UserDTOModel>
+@using ManagementAssistanceForBusinessWeb_OnlyRole.Models
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor httpContextAccessor
+@{
+	ViewData["Title"] = "Get all users";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	// get userID and role from session
+	var userId = int.Parse(httpContextAccessor.HttpContext.Session.GetString("UserID"));
+	var role = httpContextAccessor.HttpContext.Session.GetString("Role");
+}
+<div class="user-list-container">
+    <div class="user-list-header">
+        <h2 class="user-list-title">User List</h2>
+    </div>
+    <table class="user-list-table">
+        <thead>
+            <tr>
+                <th>User ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.UserID</td>
+                    <td>@user.Username</td>
+                    <td>@user.Email</td>
+                    <td>@user.PhoneNumber</td>
+                    <td>@user.Role</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<style>
+    .user-list-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+
+    .user-list-header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .user-list-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .user-list-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .user-list-table th, .user-list-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .user-list-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .user-list-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .user-list-table tr:hover {
+            background-color: #f1f1f1;
+        }
+</style>
